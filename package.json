@@ -1,0 +1,21 @@
+{
+  "name": "local-events-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Events Hub PWA",
+  "scripts": {
+    "dev": "concurrently \"npm:dev:build\" \"npm:dev:server\"",
+    "dev:build": "eleventy --watch",
+    "dev:server": "node server/dev-server.cjs",
+    "build": "eleventy",
+    "preview": "npx serve _site",
+    "lint": "echo \"No linter configured yet\"",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "concurrently": "^9.2.1",
+    "express": "^4.21.2",
+    "serve": "^14.2.3"
+  }
+}

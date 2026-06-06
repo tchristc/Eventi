@@ -1,0 +1,16 @@
+{
+  "name": "Local Events Hub",
+  "short_name": "Events Hub",
+  "description": "Discover and browse local events.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fcf8",
+  "theme_color": "#174e2b",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

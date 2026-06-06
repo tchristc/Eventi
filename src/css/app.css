@@ -1,0 +1,97 @@
+:root {
+  --brand-ink: #0f2c19;
+  --brand-leaf: #174e2b;
+  --brand-mint: #d5f6dc;
+  --surface: #f5fbf6;
+}
+
+body {
+  background: radial-gradient(circle at top right, #e4fbe8, #f8fcf8 55%, #ffffff 100%);
+  color: var(--brand-ink);
+}
+
+.site-header {
+  background: linear-gradient(90deg, #ffffff, #eef9f1);
+  border-bottom: 1px solid #d7ebdd;
+}
+
+.brand {
+  text-decoration: none;
+  color: var(--brand-leaf);
+  font-weight: 700;
+}
+
+.nav-link-inline {
+  text-decoration: none;
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+
+.hero {
+  background: linear-gradient(135deg, #d7f6de, #ffffff);
+  border: 1px solid #c8e8d0;
+}
+
+.filter-panel {
+  background: linear-gradient(180deg, #f4fbf6, #ffffff);
+  border: 1px solid #d6eadb;
+}
+
+.recent-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.location-suggestions {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.35rem;
+  border: 1px solid #cfe5d5;
+  border-radius: 0.65rem;
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(13, 44, 25, 0.08);
+  z-index: 20;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.location-suggestions.is-open {
+  display: block;
+}
+
+.location-suggestion-item + .location-suggestion-item {
+  border-top: 1px solid #edf5ef;
+}
+
+.location-suggestion-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  color: var(--brand-ink);
+}
+
+.location-suggestion-btn:hover,
+.location-suggestion-btn:focus-visible {
+  background: #eef8f1;
+  outline: 0;
+}
+
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.65rem;
+  background: #ffffff;
+  border: 1px solid #deeee3;
+}
+
+#events-results > p {
+  margin: 0.75rem 0;
+}

@@ -1,0 +1,8 @@
+name = "local-events-hub"
+compatibility_date = "2026-06-06"
+
+[build]
+command = "npm run build"
+
+[site]
+bucket = "./_site"

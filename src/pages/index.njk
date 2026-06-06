@@ -1,0 +1,105 @@
+---
+layout: ../layouts/base.njk
+title: Local Events Hub
+---
+<section class="hero rounded-4 p-4 p-md-5 mb-4">
+  <h1 class="display-6 fw-semibold mb-2">Find what is happening nearby</h1>
+  <p class="mb-0">A static-first events experience powered by community and public event feeds.</p>
+</section>
+
+<section class="mb-4" aria-labelledby="search-filters">
+  <div class="filter-panel rounded-4 p-3 p-md-4">
+    <h2 id="search-filters" class="h5 mb-3">Search Filters</h2>
+
+    <form id="event-filter-form" novalidate>
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4 position-relative">
+          <label class="form-label" for="location-input">Location</label>
+          <input
+            class="form-control"
+            id="location-input"
+            name="location"
+            type="text"
+            autocomplete="off"
+            placeholder="Type city or ZIP"
+            aria-autocomplete="list"
+            aria-controls="location-suggestions"
+            aria-expanded="false"
+          />
+          <ul class="location-suggestions list-unstyled" id="location-suggestions" role="listbox" aria-label="Location suggestions"></ul>
+          <div class="form-text">Type a city or ZIP to set location and refresh nearby events.</div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label" for="subject-input">Subject</label>
+          <input class="form-control" id="subject-input" name="subject" type="text" placeholder="music, food, technology" />
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <label class="form-label" for="category-select">Category</label>
+          <select class="form-select" id="category-select" name="category">
+            <option value="all">All categories</option>
+            <option value="arts">Arts</option>
+            <option value="community">Community</option>
+            <option value="food">Food</option>
+            <option value="music">Music</option>
+            <option value="technology">Technology</option>
+            <option value="wellness">Wellness</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label" for="start-date-input">Start Date</label>
+          <input class="form-control" id="start-date-input" name="startDate" type="date" />
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label" for="end-date-input">End Date</label>
+          <input class="form-control" id="end-date-input" name="endDate" type="date" />
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <label class="form-label" for="radius-input">Radius (miles)</label>
+          <input class="form-control" id="radius-input" name="radius" type="number" min="1" max="100" value="50" />
+        </div>
+
+        <div class="col-12 col-lg-3 d-flex align-items-end gap-2">
+          <button class="btn btn-success w-100" id="search-button" type="submit">Search</button>
+        </div>
+
+        <div class="col-12">
+          <p class="mb-0 text-danger small" id="filter-error" role="alert" aria-live="polite"></p>
+        </div>
+      </div>
+    </form>
+
+    <div class="mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h6 mb-0">Recent Locations</h3>
+      </div>
+      <ul class="recent-list list-unstyled mb-0" id="recent-locations" aria-live="polite"></ul>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="upcoming-events">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 id="upcoming-events" class="h4 mb-0">Local Events</h2>
+    <p class="small text-body-secondary mb-0" id="results-meta" aria-live="polite"></p>
+  </div>
+
+  <div class="row g-3" id="events-results" aria-live="polite"></div>
+</section>
+
+<template id="event-card-template">
+  <article class="col-12 col-md-6 col-lg-4">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <p class="text-body-secondary small mb-2" data-event-date></p>
+        <h3 class="h5 card-title" data-event-title></h3>
+        <p class="card-text mb-1" data-event-venue></p>
+        <p class="small mb-0 text-body-secondary" data-event-summary></p>
+      </div>
+    </div>
+  </article>
+</template>

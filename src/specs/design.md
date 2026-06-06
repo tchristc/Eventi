@@ -148,6 +148,42 @@ Features:
 * Location filtering
 * Calendar integrations
 
+### Discovery Filter Requirements
+
+The event discovery interface must support a dynamic, client-side filter model with server-backed refresh.
+
+Required controls:
+
+* Location selector (dynamic dropdown)
+* Subject text input
+* Category selector
+* Start date
+* End date
+* Radius selector (default: 50 miles)
+
+Required behavior:
+
+* Users can set current location from a dynamic dropdown of location suggestions.
+* The selected location is persisted in Local Storage as the active location.
+* Recent locations are stored and shown in the same dropdown as quick-select options.
+* Users can remove one or more recent locations from the dropdown list.
+* Changing location refreshes the event feed immediately and only displays events for that location context.
+* Updating any filter control (subject, category, date range, radius) updates displayed events dynamically without full page reload.
+* Date validation rules:
+  * `start_date` can be empty.
+  * `end_date` can be empty.
+  * if both are provided, `start_date <= end_date` is required.
+* Radius validation rules:
+  * allowed range: 1 to 100 miles
+  * default value: 50 miles
+
+Search semantics:
+
+* Subject performs case-insensitive match against title and description.
+* Category filters by canonical event category slug.
+* Date range filters by event start/end overlap.
+* Radius filters by distance from selected location coordinates.
+
 ---
 
 ## Data Layer
@@ -308,6 +344,22 @@ event_data
 created_at
 ```
 
+### recent_locations (optional server sync)
+
+Primary persistence for recent locations is Local Storage. This table enables cross-device sync for authenticated users.
+
+```sql
+recent_locations
+----------------
+id
+user_id
+label
+latitude
+longitude
+last_used_at
+created_at
+```
+
 ---
 
 # Security Architecture
@@ -371,6 +423,43 @@ Example:
 }
 ```
 
+### Event Discovery Query Contract
+
+Event feed endpoints must support these query parameters:
+
+* `location_lat` (required when location is set)
+* `location_lng` (required when location is set)
+* `subject` (optional)
+* `category` (optional)
+* `start_date` (optional, ISO 8601 date)
+* `end_date` (optional, ISO 8601 date)
+* `radius_miles` (optional, default `50`)
+
+Example request:
+
+```text
+/api/v1/events?location_lat=37.7749&location_lng=-122.4194&subject=music&category=live-music&start_date=2026-06-01&end_date=2026-06-30&radius_miles=50
+```
+
+Example success response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "filters": {
+      "location": { "lat": 37.7749, "lng": -122.4194 },
+      "subject": "music",
+      "category": "live-music",
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-30",
+      "radius_miles": 50
+    },
+    "events": []
+  }
+}
+```
+
 ---
 
 # Caching Strategy
@@ -404,6 +493,8 @@ Store:
 * UI preferences
 * Theme
 * Last search filters
+* Active location selection
+* Recent location list (with remove support)
 
 ---
 
