@@ -25,6 +25,8 @@
 - Added Cloudflare Pages Function route at functions/api/v1/events.js for deployment path parity.
 - Updated dev workflow to run Eleventy watch + local API server concurrently.
 - Verified endpoint returns filtered JSON response locally on localhost:8081.
+- Connected local and Cloudflare API routes to Supabase `events` table via PostgREST when SUPABASE_URL and SUPABASE_ANON_KEY are configured.
+- Added automatic fallback to sample events when Supabase credentials are missing or query fails.
 
 ### In Progress
 - Event data model and Supabase schema migration files.

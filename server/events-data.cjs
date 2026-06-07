@@ -79,6 +79,20 @@ const EVENTS = [
   }
 ];
 
+const SUPABASE_SELECT_COLUMNS = [
+  "id",
+  "title",
+  "description",
+  "category",
+  "start_date",
+  "end_date",
+  "venue",
+  "city",
+  "state",
+  "latitude",
+  "longitude"
+].join(",");
+
 function milesBetween(lat1, lng1, lat2, lng2) {
   const toRadians = value => (value * Math.PI) / 180;
   const earthRadiusMiles = 3958.8;
@@ -135,8 +149,8 @@ function parseFilters(query) {
   };
 }
 
-function filterEvents(filters) {
-  return EVENTS.filter(event => {
+function filterEvents(filters, sourceEvents = EVENTS) {
+  return sourceEvents.filter(event => {
     if (filters.subject) {
       const query = filters.subject.toLowerCase();
       const haystack = `${event.title} ${event.description}`.toLowerCase();
@@ -172,7 +186,79 @@ function filterEvents(filters) {
   });
 }
 
+function mapSupabaseEvent(row) {
+  return {
+    id: row.id,
+    title: row.title || "Untitled event",
+    description: row.description || "",
+    category: row.category || "community",
+    startDate: row.start_date,
+    endDate: row.end_date || row.start_date,
+    venue: row.venue || "Venue TBA",
+    city: row.city || "",
+    state: row.state || "",
+    latitude: Number(row.latitude),
+    longitude: Number(row.longitude)
+  };
+}
+
+async function fetchSupabaseEvents(filters, config) {
+  const endpoint = new URL("/rest/v1/events", config.url);
+  endpoint.searchParams.set("select", SUPABASE_SELECT_COLUMNS);
+  endpoint.searchParams.set("order", "start_date.asc");
+  endpoint.searchParams.set("limit", "400");
+
+  if (filters.category && filters.category !== "all") {
+    endpoint.searchParams.set("category", `eq.${filters.category}`);
+  }
+
+  if (filters.startDate) {
+    endpoint.searchParams.set("start_date", `gte.${filters.startDate}`);
+  }
+
+  if (filters.endDate) {
+    endpoint.searchParams.set("start_date", `lte.${filters.endDate}`);
+  }
+
+  if (filters.subject) {
+    const term = filters.subject.replace(/,/g, " ");
+    endpoint.searchParams.set("or", `(title.ilike.*${term}*,description.ilike.*${term}*)`);
+  }
+
+  const response = await fetch(endpoint, {
+    headers: {
+      apikey: config.key,
+      authorization: `Bearer ${config.key}`,
+      accept: "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Supabase events query failed with status ${response.status}`);
+  }
+
+  const rows = await response.json();
+  if (!Array.isArray(rows)) {
+    throw new Error("Supabase events query returned an unexpected payload");
+  }
+
+  return rows.map(mapSupabaseEvent);
+}
+
+async function getEvents(filters, config) {
+  if (!config || !config.url || !config.key) {
+    return filterEvents(filters, EVENTS);
+  }
+
+  try {
+    const supabaseEvents = await fetchSupabaseEvents(filters, config);
+    return filterEvents(filters, supabaseEvents);
+  } catch (_error) {
+    return filterEvents(filters, EVENTS);
+  }
+}
+
 module.exports = {
-  filterEvents,
+  getEvents,
   parseFilters
 };
